@@ -6,12 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Proyek Akhir — Analisis Kemiskinan Jawa & Sumatra</title>
 
-    <!-- Fonts -->
+    <script>
+        (function () {
+            try {
+                var saved = localStorage.getItem('site-theme') || 'dark';
+                document.documentElement.setAttribute('data-theme', saved);
+            } catch (e) { }
+        })();
+    </script>
+
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap"
         rel="stylesheet">
 
-    <!-- CSS Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -34,6 +41,136 @@
             --text: #F0F4FF;
             --muted: #8892A4;
             --white: #FFFFFF;
+            --overlay: rgba(255, 255, 255, 0.03);
+            --line-rgb: 255, 255, 255;
+            --hero-grad: linear-gradient(135deg, #0F1117 0%, #161B2E 50%, #0F1117 100%);
+            --particle-alpha-mult: 1;
+            --particle-outline: rgba(0, 0, 0, 0);
+        }
+
+        /* ── LIGHT MODE ── */
+        html[data-theme="light"] {
+            --bg: #F2F7FC;
+            --surface: #FFFFFF;
+            --card: #FFFFFF;
+            --border: rgba(15, 35, 65, 0.10);
+            --text: #1B2536;
+            --muted: #5C6B82;
+            --white: #14202F;
+            --overlay: rgba(15, 35, 65, 0.035);
+            --line-rgb: 20, 40, 70;
+            --hero-grad: linear-gradient(135deg, #D9E8F7 0%, #EEF5FC 45%, #D7E6F6 100%);
+            --particle-alpha-mult: 1.35;
+            --particle-outline: rgba(15, 35, 65, 0.18);
+        }
+
+        html[data-theme="light"] .navbar-custom {
+            background: rgba(242, 247, 252, 0.75);
+        }
+
+        /* Kartu beraksen warna (kesimpulan, profil, dsb) perlu opasitas lebih
+           tinggi di mode terang agar tidak menyatu dengan background terang */
+        html[data-theme="light"] .kesimpulan-box {
+            background: rgba(0, 180, 216, 0.12);
+        }
+
+        html[data-theme="light"] .kesimpulan-box:hover {
+            background: rgba(0, 180, 216, 0.20);
+        }
+
+        html[data-theme="light"] .wc-jawa {
+            background: rgba(0, 180, 216, 0.14);
+            border-color: rgba(0, 180, 216, 0.4);
+        }
+
+        html[data-theme="light"] .wc-sum {
+            background: rgba(123, 94, 167, 0.14);
+            border-color: rgba(123, 94, 167, 0.4);
+        }
+
+        html[data-theme="light"] .profil-box {
+            background: rgba(255, 107, 43, 0.10);
+            border-color: rgba(255, 107, 43, 0.3);
+        }
+
+        html[data-theme="light"] .profil-box:hover {
+            background: rgba(255, 107, 43, 0.16);
+        }
+
+        html[data-theme="light"] .thank-you-box {
+            background: rgba(255, 184, 48, 0.12);
+            border-color: rgba(255, 184, 48, 0.35);
+        }
+
+        html[data-theme="light"] .hypo-h0 {
+            background: rgba(92, 107, 130, 0.10);
+            border-color: rgba(92, 107, 130, 0.3);
+        }
+
+        html[data-theme="light"] .hypo-h1 {
+            background: rgba(0, 160, 120, 0.12);
+            border-color: rgba(0, 160, 120, 0.35);
+        }
+
+        html[data-theme="light"] .geo-jawa,
+        html[data-theme="light"] .pearson-jawa {
+            background: rgba(0, 180, 216, 0.14);
+            border-color: rgba(0, 180, 216, 0.4);
+        }
+
+        html[data-theme="light"] .geo-sum,
+        html[data-theme="light"] .pearson-sum {
+            background: rgba(123, 94, 167, 0.14);
+            border-color: rgba(123, 94, 167, 0.4);
+        }
+
+        html[data-theme="light"] .team-card:hover {
+            background: rgba(255, 107, 43, 0.16);
+        }
+
+        html[data-theme="light"] .card,
+        html[data-theme="light"] .stat-box,
+        html[data-theme="light"] .result-block {
+            box-shadow: 0 2px 14px rgba(15, 35, 65, 0.06);
+        }
+
+        body,
+        .navbar-custom {
+            transition: background-color .4s ease, color .4s ease, border-color .4s ease;
+        }
+
+        /* ── THEME TOGGLE SWITCH ── */
+        .theme-toggle {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            border-radius: 50px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            padding: 2px;
+            transition: background .3s ease, border-color .3s ease;
+        }
+
+        .theme-toggle .toggle-knob {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--orange), var(--yellow));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            transform: translateX(0);
+            transition: transform .3s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        html[data-theme="light"] .theme-toggle .toggle-knob {
+            transform: translateX(24px);
+            background: linear-gradient(135deg, var(--teal), var(--purple));
         }
 
         *,
@@ -127,7 +264,8 @@
             justify-content: center;
             padding: clamp(3rem, 8vw, 5rem) 1rem clamp(2rem, 5vw, 4rem);
             overflow: hidden;
-            background: linear-gradient(135deg, #0F1117 0%, #161B2E 50%, #0F1117 100%);
+            background: var(--hero-grad);
+            transition: background .4s ease;
         }
 
         .hero-inner {
@@ -210,7 +348,7 @@
         }
 
         .meta-card {
-            background: rgba(255, 255, 255, 0.04);
+            background: var(--overlay);
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: .85rem 1.1rem;
@@ -252,7 +390,7 @@
         }
 
         .team-card {
-            background: rgba(255, 255, 255, 0.03);
+            background: var(--overlay);
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: .9rem .7rem;
@@ -567,7 +705,7 @@
 
         /* ── INTERACTIVE CHARTS & MAP ── */
         .chart-container {
-            background: rgba(255, 255, 255, 0.02);
+            background: var(--overlay);
             border: 1px solid var(--border);
             border-radius: 14px;
             padding: clamp(1rem, 3vw, 1.5rem);
@@ -753,7 +891,7 @@
         }
 
         .reg-card {
-            background: rgba(255, 255, 255, 0.03);
+            background: var(--overlay);
             border: 1px solid var(--border);
             border-radius: 14px;
             padding: clamp(0.9rem, 2vw, 1.25rem);
@@ -1225,7 +1363,6 @@
 
 <body>
 
-    <!-- NAVBAR (NAVIGASI) -->
     <nav class="navbar-custom" data-aos="fade-down" data-aos-duration="800">
         <a href="#hero" class="navbar-brand-custom">Kelompok<span>5</span></a>
         <div class="navbar-links">
@@ -1236,9 +1373,12 @@
             <a href="#tahap5">Modeling</a>
             <a href="#tahap6">Kesimpulan</a>
         </div>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Ganti mode terang/gelap"
+            title="Ganti mode terang/gelap">
+            <span class="toggle-knob">🌙</span>
+        </button>
     </nav>
 
-    <!-- HERO SECTION -->
     <section id="hero" class="container-fluid hero">
         <canvas id="hero-canvas"></canvas>
         <div class="hero-inner" data-aos="fade-up" data-aos-duration="900">
@@ -1282,7 +1422,6 @@
 
     <main>
 
-        <!-- TAHAP 1 -->
         <div id="tahap1" class="section">
             <div class="section-eyebrow" data-aos="fade-right">Tahap 1 &nbsp;-&nbsp; Problem Definition</div>
             <h2 data-aos="fade-up">Definisi masalah</h2>
@@ -1318,7 +1457,6 @@
             </div>
         </div>
 
-        <!-- TAHAP 2/3 -->
         <div id="tahap2" class="section">
             <div class="section-eyebrow" data-aos="fade-right">Tahap 2 &amp; 3 &nbsp;/&nbsp; Data</div>
             <h2 data-aos="fade-up">Pengumpulan &amp; inspeksi data</h2>
@@ -1363,16 +1501,16 @@
             </div>
         </div>
 
-        <!-- TAHAP 4 -->
         <div id="tahap4" class="section">
             <div class="section-eyebrow" data-aos="fade-right">Tahap 4 &nbsp;/&nbsp; EDA</div>
             <h2 data-aos="fade-up">Exploratory data analysis</h2>
 
-            <div class="graf-label" data-aos="fade-up">Grafik 1 — Disparitas & Boxplot Kemiskinan</div>
-            <div class="chart-container" data-aos="fade-up" data-aos-delay="60">
+            <div class="graf-label" data-aos="zoom-out" data-aos-delay="1300">Grafik 1 — Boxplot Disparitas Kemiskinan
+            </div>
+            <div class="chart-container" data-aos="zoom-out" data-aos-delay="1300">
                 <div id="chart-boxplot"></div>
             </div>
-            <div class="kesimpulan-box" data-aos="fade-up" data-aos-delay="80">
+            <div class="kesimpulan-box" data-aos="fade-up" data-aos-delay="800">
                 <div class="k-label">Kesimpulan grafik 1</div>
                 <p>Secara keseluruhan, meskipun Pulau Jawa dan Sumatra memiliki tingkat median kemiskinan yang relatif
                     sama, Sumatra menunjukkan disparitas atau ketimpangan kemiskinan yang lebih tinggi dengan adanya
@@ -1380,34 +1518,34 @@
                     di Pulau Jawa.</p>
             </div>
 
-            <div class="graf-label" data-aos="fade-up" style="margin-top:1.75rem">Grafik 2 — Heatmap Korelasi Pearson
+            <div class="graf-label" data-aos="zoom-in" data-aos-delay="1300" style="margin-top:1.75rem">Grafik 2 —
+                Heatmap Korelasi Pearson
             </div>
-            <div class="chart-container" data-aos="fade-up" data-aos-delay="60">
+            <div class="chart-container" data-aos="zoom-in" data-aos-delay="1300">
                 <div id="chart-heatmap"></div>
             </div>
-            <div class="kesimpulan-box" data-aos="fade-up" data-aos-delay="80">
-                <div class="k-label">Kesimpulan grafik 2</div>
+            <div class="kesimpulan-box" data-aos="fade-up" data-aos-delay="800">
+                <div class="k-label" data-aos="fade-up" data-aos-delay="800">Kesimpulan grafik 2</div>
                 <p>Variabel Pengeluaran per Kapita (Ribu Rp) memiliki koefisien korelasi negatif terkuat terhadap
                     Penduduk Miskin (%). Ini menunjukkan adanya hubungan linier terbalik yang solid — semakin tinggi
                     kapasitas daya beli pengeluaran masyarakat, tingkat kemiskinan dipastikan turun.</p>
             </div>
         </div>
 
-        <!-- TAHAP 5 -->
         <div id="tahap5" class="section">
-            <div class="section-eyebrow" data-aos="fade-right">Tahap 5 &nbsp;/&nbsp; Modeling</div>
+            <div class="section-eyebrow" data-aos="fade-right" data-aos-delay="800">Tahap 5 &nbsp;/&nbsp; Modeling</div>
             <h2 data-aos="fade-up">Pemodelan statistik &amp; hasil</h2>
 
-            <div class="result-block" data-aos="fade-up" data-aos-delay="60">
+            <div class="result-block" data-aos="fade-up" data-aos-delay="1000">
                 <h4>📐 Korelasi Pearson (Q1 — validasi daya beli)</h4>
                 <div class="pearson-row">
-                    <div class="pearson-card pearson-jawa">
+                    <div class="pearson-card pearson-jawa" data-aos="zoom-out" data-aos-delay="1000">
                         <div class="p-region">Pulau Jawa</div>
                         <div class="p-r">r = &minus;0.4152</div>
                         <div class="p-pv">p-value = 0.000003</div>
                         <div class="p-sig">✓ Signifikan</div>
                     </div>
-                    <div class="pearson-card pearson-sum">
+                    <div class="pearson-card pearson-sum" data-aos="zoom-out" data-aos-delay="1000">
                         <div class="p-region">Pulau Sumatra</div>
                         <div class="p-r">r = &minus;0.2824</div>
                         <div class="p-pv">p-value = 0.000388</div>
@@ -1417,46 +1555,90 @@
                 <div class="tolak-h0">✅ Tolak H0 — daya beli terbukti menurunkan kemiskinan di kedua pulau</div>
             </div>
 
-            <div class="result-block" data-aos="fade-up" data-aos-delay="120">
+            <div class="result-block" data-aos="fade-up" data-aos-delay="800">
                 <h4>📉 Regresi linear berganda (Q2 — faktor dominan)</h4>
                 <div class="reg-row">
-                    <div class="reg-card">
+                    <div class="reg-card" data-aos="zoom-in" data-aos-delay="1000">
                         <div class="rg-title">Pulau Jawa</div>
-                        <div class="rg-r2">R² = 0.219</div>
+                        <div class="rg-r2">coef = 2.8670</div>
                         <div class="rg-dom">Faktor dominan:</div>
-                        <div class="rg-add">Pengeluaran per Kapita (Ribu Rp)</div>
+                        <div class="rg-add">Lama Sekolah</div>
                     </div>
-                    <div class="reg-card">
+                    <div class="reg-card" data-aos="zoom-in" data-aos-delay="1000">
                         <div class="rg-title">Pulau Sumatra</div>
-                        <div class="rg-r2">R² = 0.125</div>
+                        <div class="rg-r2">coef = 2.2260</div>
                         <div class="rg-dom">Faktor dominan:</div>
-                        <div class="rg-add">Pengeluaran per Kapita + Sanitasi Layak</div>
+                        <div class="rg-add">Pengeluaran per Kapita</div>
                     </div>
                 </div>
             </div>
 
-            <div class="kesimpulan-box" data-aos="fade-up" data-aos-delay="80">
-                <div class="k-label">Kesimpulan tahap 5</div>
-                <p>Daya beli adalah faktor utama penentu kemiskinan di kedua wilayah. Di Jawa, kebijakan fokus pada
-                    peningkatan daya beli. Di Sumatra, selain daya beli, sanitasi layak juga perlu mendapat perhatian
-                    khusus.</p>
-            </div>
+
         </div>
 
-        <!-- TAHAP 6 -->
         <div id="tahap6" class="section">
             <div class="section-eyebrow" data-aos="fade-right">Tahap 6 &nbsp;/&nbsp; Interpretasi</div>
-            <h2 data-aos="fade-up">Interpretasi akhir &amp; kesimpulan strategis</h2>
-            <p data-aos="fade-up" data-aos-delay="60">Evidence-based policy recommendations untuk Jawa dan Sumatra.</p>
+            <h2 data-aos="fade-up" data-aos-delay="600">Interpretasi akhir &amp; kesimpulan strategis</h2>
+            <p data-aos="fade-up" data-aos-delay="600">Evidence-based policy recommendations untuk Jawa dan Sumatra.</p>
 
-            <div class="graf-label" data-aos="fade-up">Grafik 3 — Feature importance Jawa vs. Sumatra</div>
-            <div class="chart-container" data-aos="fade-up" data-aos-delay="80">
-                <p style="font-size: clamp(11px, 1.8vw, 13px); color: var(--muted); margin-bottom: 15px;">Nilai negatif
-                    (kiri) menekan kemiskinan, nilai positif (kanan) memicu kemiskinan.</p>
-                <div id="chart-bar"></div>
+            <div class="graf-label" data-aos="zoom-in" data-aos-delay="1500">Grafik 3 — Komparasi Faktor Penentu
+                Kemiskinan: Jawa vs Sumatra
             </div>
 
-            <div class="answer-block" data-aos="fade-up" data-aos-delay="60">
+            <!-- Dashboard Container (Latar Putih Sesuai Gambar) -->
+            <div style="background-color: #ffffff; color: #222; border-radius: 12px; padding: 2rem 1.5rem; margin-bottom: 2rem; border: 1px solid var(--border);"
+                data-aos="zoom-in" data-aos-delay="1500">
+
+                <!-- Judul Dashboard -->
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h3
+                        style="font-family: Arial, sans-serif; font-size: clamp(16px, 3vw, 20px); font-weight: bold; color: #222; margin: 0; line-height: 1.3;">
+                        Executive Dashboard Komparasi Faktor Penentu Kemiskinan: Jawa vs Sumatra</h3>
+                    <h4
+                        style="font-family: Arial, sans-serif; font-size: clamp(14px, 2.5vw, 18px); font-weight: bold; color: #222; margin: 5px 0 0 0;">
+                        (Evidence-Based Policy Perencanaan Wilayah)</h4>
+                </div>
+
+                <div class="row align-items-center">
+                    <!-- Sisi Kiri (Pulau Jawa) -->
+                    <div class="col-md-6 mb-4 mb-md-0">
+                        <div style="text-align: center; margin-bottom: -15px; position: relative; z-index: 2;">
+                            <div
+                                style="font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; color: #222;">
+                                PULAU JAWA</div>
+                            <div
+                                style="font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; color: #222;">
+                                Kekuatan Indikator Penentu Kemiskinan (R² = 0.579)</div>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <div
+                                style="writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; font-family: Arial, sans-serif; font-size: 13px; color: #222; margin-right: -10px; font-weight: 500;">
+                                8 Indikator Makro</div>
+                            <div id="chart-jawa"
+                                style="flex: 1; border: 1px solid #333; border-top: none; padding-top: 15px;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Sisi Kanan (Pulau Sumatra) -->
+                    <div class="col-md-6">
+                        <div style="text-align: center; margin-bottom: -15px; position: relative; z-index: 2;">
+                            <div
+                                style="font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; color: #222;">
+                                PULAU SUMATRA</div>
+                            <div
+                                style="font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; color: #222;">
+                                Kekuatan Indikator Penentu Kemiskinan (R² = 0.355)</div>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <div id="chart-sumatra"
+                                style="flex: 1; border: 1px solid #333; border-top: none; padding-top: 15px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="answer-block" data-aos="fade-up" data-aos-delay="800">
                 <div class="ans-header">
                     <div class="ans-num">1</div>
                     <div class="ans-title">Jawaban Q1 — validasi instrumen daya beli</div>
@@ -1466,7 +1648,7 @@
                     konsisten menurunkan angka kemiskinan di Jawa dan Sumatra.</div>
             </div>
 
-            <div class="answer-block" data-aos="fade-up" data-aos-delay="80">
+            <div class="answer-block" data-aos="fade-up" data-aos-delay="800">
                 <div class="ans-header">
                     <div class="ans-num">2</div>
                     <div class="ans-title">Jawaban Q2 — faktor dominan per wilayah</div>
@@ -1474,57 +1656,78 @@
             </div>
 
             <div class="wilayah-compare">
-                <div class="wc wc-jawa" data-aos="fade-right" data-aos-delay="100">
+                <div class="wc wc-jawa" data-aos="fade-right" data-aos-delay="1000">
                     <div class="wc-label">Pulau Jawa</div>
-                    <div class="wc-dom">Pengeluaran per Kapita (Ribu Rp)</div>
-                    <div class="wc-int">Kebijakan di Jawa sangat responsif terhadap peningkatan kualitas SDM. Fokus pada
-                        pendidikan terbukti menjadi penentu utama stabilitas ekonomi wilayah.</div>
+                    <div class="wc-dom">Lama Sekolah</div>
+                    <div class="wc-int">Di Pulau Jawa, sekadar ngasih bantuan uang/menaikkan daya
+                        beli (Pengeluaran per Kapita) TIDAK AKAN CUKUP untuk mengeluarkan orang dari garis kemiskinan
+                        struktural,JIKA orang tersebut tidak berpendidikan (Lama Sekolah rendah). Di Jawa, persaingan
+                        sangat ketat;
+                        uang bisa habis, tapi ijazah dan keahlian (Lama Sekolah) adalah faktor absolut yang menentukan
+                        seseorang miskin atau tidak.</div>
                 </div>
-                <div class="wc wc-sum" data-aos="fade-left" data-aos-delay="100">
+                <div class="wc wc-sum" data-aos="fade-down" data-aos-delay="1000">
                     <div class="wc-label">Pulau Sumatra</div>
                     <div class="wc-dom">Pengeluaran per Kapita (Ribu Rp)</div>
-                    <div class="wc-int">Dinamika kemiskinan di Sumatra sangat dipengaruhi oleh ketersediaan lapangan
-                        kerja. Penurunan kemiskinan memerlukan stimulus di sektor pasar kerja riil.</div>
+                    <div class="wc-int">Di Sumatera, cara paling absolut untuk mengentaskan kemiskinan adalah dengan
+                        memompa daya beli masyarakat (memastikan mereka punya uang untuk belanja)
+                        dan memperbaiki fasilitas kesehatan dasar agar umur harapan hidup naik. Di sini, uang
+                        (ekonomi)jauh lebih krusial dibandingkan indikator lainnya.</div>
                 </div>
             </div>
 
-            <div class="answer-block" data-aos="fade-up">
+            <div class="answer-block" data-aos="fade-up" data-aos-delay="800">
                 <div class="ans-header">
                     <div class="ans-num">3</div>
                     <div class="ans-title">Kesimpulan profiling wilayah</div>
                 </div>
             </div>
 
-            <div class="profil-box" data-aos="fade-up" data-aos-delay="60">
-                <div class="profil-title">Rekomendasi kebijakan berbasis bukti</div>
-                <ul>
-                    <li>Analisis menunjukkan perbedaan karakteristik sosio-ekonomi yang nyata antara Jawa dan Sumatra.
-                    </li>
-                    <li>Di Jawa, profil kemiskinan lebih dipengaruhi oleh <strong>Pengeluaran per Kapita</strong> —
-                        urgensi peningkatan kapasitas modal manusia.</li>
-                    <li>Di Sumatra, profil kemiskinan lebih sensitif terhadap <strong>Pengeluaran per Kapita</strong> —
-                        urgensi stabilitas ekonomi makro.</li>
-                    <li>Kebijakan penanggulangan kemiskinan harus disesuaikan dengan karakteristik unik masing-masing
-                        wilayah — bukan pendekatan seragam.</li>
-                </ul>
-            </div>
-        </div>
+            <div class="profil-box" data-aos="fade-up" data-aos-delay="1000">
+                <div class="profil-title text-center">Rekomendasi kebijakan berbasis bukti</div>
+                <div>
+                    <h3 class="mb-5 text-center">Analisis menunjukkan perbedaan karakteristik sosio-ekonomi yang nyata
+                        antara Jawa
+                        dan Sumatra.
+                    </h3>
+                    <ul>
+                        <li class="mb-3">1. Pulau Jawa: Mengingat kualitas SDM menjadi kunci utama pengentasan
+                            kemiskinan, pemerintah
+                            harus
+                            berfokus pada peningkatan kualitas pendidikan dan program pelatihan vokasi yang relevan
+                            dengan
+                            kebutuhan pasar kerja. Kebijakan harus diarahkan untuk menciptakan tenaga kerja terampil
+                            yang mampu
+                            bersaing di sektor industri dan jasa yang padat kompetisi, sehingga masyarakat dapat keluar
+                            dari
+                            kemiskinan melalui peningkatan produktivitas diri.</li>
 
-        <!-- SECTION TERIMA KASIH -->
-        <div id="thanks" class="section" style="border-bottom: none; padding-bottom: 2rem;">
-            <div class="thank-you-box" data-aos="zoom-in" data-aos-delay="100">
-                <h2>Terima Kasih</h2>
-                <p>Proyek analisis data statistik ini disusun untuk memenuhi tugas akhir mata kuliah terkait. Semoga
-                    visualisasi dan interpretasi ini memberikan wawasan yang mendalam serta bermanfaat bagi penelitian
-                    dan perumusan kebijakan ekonomi wilayah ke depannya.</p>
-                <div class="ty-accent">Kelompok 5</div>
-                <a href="#hero" class="btn-back-top">Kembali ke Atas ⬆</a>
+                        <li>Pulau Sumatera: Mengingat daya beli dan kesehatan fisik masyarakat adalah faktor yang paling
+                            menentukan, pemerintah harus berfokus pada penguatan stabilitas ekonomi rumah tangga dan
+                            peningkatan
+                            akses kesehatan dasar. Kebijakan diarahkan untuk menjaga daya beli melalui stimulus ekonomi
+                            atau
+                            modal usaha kecil, serta memastikan fasilitas kesehatan tersedia luas agar masyarakat tetap
+                            sehat
+                            dan produktif dalam menggerakkan ekonomi berbasis komoditas dan sumber daya alam.</li>
+                    </ul>
+                </div>
             </div>
-        </div>
+
+            <div id="thanks" class="section" style="border-bottom: none; padding-bottom: 2rem;">
+                <div class="thank-you-box" data-aos="zoom-in" data-aos-delay="100">
+                    <h2>Terima Kasih</h2>
+                    <p>Proyek analisis data statistik ini disusun untuk memenuhi tugas akhir mata kuliah terkait. Semoga
+                        visualisasi dan interpretasi ini memberikan wawasan yang mendalam serta bermanfaat bagi
+                        penelitian
+                        dan perumusan kebijakan ekonomi wilayah ke depannya.</p>
+                    <div class="ty-accent">Kelompok 5</div>
+                    <a href="#hero" class="btn-back-top">Kembali ke Atas ⬆</a>
+                </div>
+            </div>
 
     </main>
 
-    <!-- JS Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -1533,6 +1736,63 @@
     <script>
         // Inisialisasi AOS
         AOS.init({ once: false, offset: 60, easing: 'ease-out-cubic' });
+
+        /* =========================================
+           THEME TOGGLE (MODE TERANG / GELAP)
+           ========================================= */
+        const root = document.documentElement;
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeKnob = themeToggleBtn.querySelector('.toggle-knob');
+        let map, tileLayer, chartBox, chartBarKorelasi;
+
+        function applyThemeIcon(theme) {
+            themeKnob.textContent = theme === 'light' ? '☀️' : '🌙';
+        }
+
+        function updateChartsForTheme(theme) {
+            const mode = theme === 'light' ? 'light' : 'dark';
+            const axisColor = theme === 'light' ? '#5C6B82' : '#8892A4';
+            const labelColor = theme === 'light' ? '#1B2536' : '#F0F4FF';
+
+            if (chartBox) {
+                chartBox.updateOptions({ theme: { mode: mode } });
+            }
+            if (chartBarKorelasi) {
+                chartBarKorelasi.updateOptions({
+                    theme: { mode: mode },
+                    xaxis: { labels: { style: { colors: axisColor } } },
+                    yaxis: { labels: { style: { colors: labelColor } } }
+                });
+            }
+            if (map && tileLayer) {
+                map.removeLayer(tileLayer);
+                const tileUrl = theme === 'light'
+                    ? 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
+                    : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+                tileLayer = L.tileLayer(tileUrl, {
+                    attribution: '&copy; OpenStreetMap &copy; CARTO',
+                    subdomains: 'abcd',
+                    maxZoom: 19
+                }).addTo(map);
+            }
+        }
+
+        function setTheme(theme) {
+            root.setAttribute('data-theme', theme);
+            localStorage.setItem('site-theme', theme);
+            applyThemeIcon(theme);
+            updateChartsForTheme(theme);
+        }
+
+        themeToggleBtn.addEventListener('click', function () {
+            const current = root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+            setTheme(current === 'light' ? 'dark' : 'light');
+        });
+
+        // Terapkan tema tersimpan (default: gelap)
+        const savedTheme = localStorage.getItem('site-theme') || 'dark';
+        root.setAttribute('data-theme', savedTheme);
+        applyThemeIcon(savedTheme);
 
         /* =========================================
            PARTICLE BG SCRIPT
@@ -1565,13 +1825,14 @@
 
         function tick() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const lineRGB = getComputedStyle(root).getPropertyValue('--line-rgb').trim() || '255,255,255';
 
             for (let i = 0; i < pts.length; i++) {
                 for (let j = i + 1; j < pts.length; j++) {
                     const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y, d = Math.hypot(dx, dy);
                     if (d < 120) {
                         ctx.beginPath();
-                        ctx.strokeStyle = `rgba(255,255,255,${(1 - d / 120) * .08})`;
+                        ctx.strokeStyle = `rgba(${lineRGB},${(1 - d / 120) * .08})`;
                         ctx.lineWidth = .5;
                         ctx.moveTo(pts[i].x, pts[i].y);
                         ctx.lineTo(pts[j].x, pts[j].y);
@@ -1604,8 +1865,12 @@
         document.addEventListener("DOMContentLoaded", function () {
 
             // 1. LEAFLET MAP
-            var map = L.map('map').setView([-2.5, 107.0], 5);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            map = L.map('map').setView([-2.5, 107.0], 5);
+            const initialTheme = root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+            const initialTileUrl = initialTheme === 'light'
+                ? 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
+                : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+            tileLayer = L.tileLayer(initialTileUrl, {
                 attribution: '&copy; OpenStreetMap &copy; CARTO',
                 subdomains: 'abcd',
                 maxZoom: 19
@@ -1675,148 +1940,181 @@
                 stroke: { colors: ['#8892A4'] }
             };
 
-            var chartBox = new ApexCharts(document.querySelector("#chart-boxplot"), optionsBox);
+            chartBox = new ApexCharts(document.querySelector("#chart-boxplot"), optionsBox);
             if (chartBox) {
                 chartBox.render();
             }
 
-            // 3. HEATMAP KORELASI
-            var optionsHeatmap = {
+            // 3. BAR CHART KORELASI (Menggantikan Heatmap)
+            var optionsBarKorelasi = {
                 series: [{
-                    name: 'Korelasi (r)', data: [
-                        { x: 'Pengeluaran Kapita', y: -0.75 },
-                        { x: 'IPM', y: -0.68 },
-                        { x: 'Lama Sekolah', y: -0.62 },
-                        { x: 'Air Minum Layak', y: -0.55 },
-                        { x: 'Sanitasi Layak', y: -0.45 },
-                        { x: 'Pengangguran', y: 0.55 }
-                    ]
+                    name: 'Nilai Korelasi (r)',
+                    data: [0.22, -0.21, -0.31, -0.31, -0.31, -0.32, -0.44, -0.55]
+                    // Sesuaikan angka ini dengan data korelasi asli Anda
                 }],
                 chart: {
-                    type: 'heatmap',
-                    height: 350,
-                    width: '100%',
-                    background: 'transparent',
-                    toolbar: { show: false },
-                    responsive: [{
-                        breakpoint: 1200,
-                        options: { chart: { height: 340 } }
-                    },
-                    {
-                        breakpoint: 768,
-                        options: { chart: { height: 300 } }
-                    },
-                    {
-                        breakpoint: 576,
-                        options: { chart: { height: 280 } }
-                    }]
-                },
-                theme: { mode: 'dark' },
-                dataLabels: { enabled: true, style: { colors: ['#fff'], fontSize: '11px' } },
-                plotOptions: {
-                    heatmap: {
-                        shadeIntensity: 0.5,
-                        colorScale: {
-                            ranges: [
-                                { from: -1, to: 0, name: 'Negatif (Menekan)', color: '#00C896' },
-                                { from: 0.01, to: 1, name: 'Positif (Memicu)', color: '#FF4D8D' }
-                            ]
-                        }
-                    }
-                }
-            };
-
-            var chartHeatmap = new ApexCharts(document.querySelector("#chart-heatmap"), optionsHeatmap);
-            if (chartHeatmap) {
-                chartHeatmap.render();
-            }
-
-            // 4. FEATURE IMPORTANCE BAR
-            var optionsBar = {
-                series: [
-                    { name: 'Pulau Jawa (Koefisien β)', data: [-0.60, -0.45, -0.20, 0.52] },
-                    { name: 'Pulau Sumatra (Koefisien β)', data: [-0.78, -0.25, -0.15, 0.35] }
-                ],
-                chart: {
                     type: 'bar',
-                    height: 400,
-                    width: '100%',
-                    background: 'transparent',
-                    toolbar: { show: false },
-                    responsive: [{
-                        breakpoint: 1200,
-                        options: { chart: { height: 380 } }
-                    },
-                    {
-                        breakpoint: 768,
-                        options: { chart: { height: 350 } }
-                    },
-                    {
-                        breakpoint: 576,
-                        options: { chart: { height: 320 } }
-                    }]
+                    height: 450,
+                    toolbar: { show: false }
                 },
                 plotOptions: {
                     bar: {
                         horizontal: true,
-                        dataLabels: { position: 'top' },
-                        borderRadius: 4
+                        barHeight: '60%',
+                        distributed: true // Penting agar warna bisa dibedakan per batang
                     }
                 },
+                colors: [
+                    '#87CEEB', // Biru muda (untuk positif)
+                    '#FF0000', // Merah (untuk negatif)
+                    '#FF0000',
+                    '#FF0000',
+                    '#FF0000',
+                    '#FF0000',
+                    '#FF0000',
+                    '#FF0000'
+                ],
                 dataLabels: {
-                    enabled: true,
-                    offsetX: 0,
-                    style: {
-                        fontSize: '11px',
-                        colors: ['#F0F4FF'],
-                        fontWeight: 600
-                    }
+                    enabled: false
                 },
-                stroke: { show: true, width: 1, colors: ['transparent'] },
+                stroke: {
+                    width: 1,
+                    colors: ['#000']
+                },
                 xaxis: {
-                    categories: ['Pengeluaran per Kapita', 'Lama Sekolah', 'Sanitasi Layak', 'Pengangguran (%)'],
-                    labels: {
-                        style: {
-                            colors: '#8892A4',
-                            fontSize: '11px',
-                            fontWeight: 500
-                        }
-                    }
+                    categories: [
+                        'Partisipasi Angkatan Kerja (%)',
+                        'Air Minum Layak (%)',
+                        'PDRB (Rp)',
+                        'Umur Harapan Hidup (Thn)',
+                        'Pengangguran (%)',
+                        'Sanitasi Layak (%)',
+                        'Lama Sekolah (Thn)',
+                        'Pengeluaran per Kapita (Ribu Rp)'
+                    ],
+                    labels: { style: { colors: '#8892A4' } }
                 },
                 yaxis: {
-                    labels: {
-                        style: {
-                            colors: '#8892A4',
-                            fontSize: '11px',
-                            fontWeight: 500
-                        }
-                    }
+                    labels: { style: { colors: '#F0F4FF' } }
                 },
-                colors: ['#00B4D8', '#FF6B2B'],
                 theme: { mode: 'dark' },
                 grid: {
-                    borderColor: 'rgba(255, 255, 255, 0.08)',
-                    padding: {
-                        left: 10,
-                        right: 10,
-                        top: 10,
-                        bottom: 10
-                    }
-                },
-                legend: {
-                    position: 'top',
-                    offsetY: 5,
-                    labels: {
-                        colors: '#8892A4',
-                        useSeriesColors: false
-                    }
+                    xaxis: { lines: { show: true } }
                 }
             };
 
-            var chartBar = new ApexCharts(document.querySelector("#chart-bar"), optionsBar);
-            if (chartBar) {
-                chartBar.render();
-                console.log('Chart Bar rendered successfully');
+            chartBarKorelasi = new ApexCharts(document.querySelector("#chart-heatmap"), optionsBarKorelasi);
+            chartBarKorelasi.render();
+
+            // 4. FEATURE IMPORTANCE BAR
+            // ==========================================================
+            // GRAFIK 3: KOMPARASI JAWA VS SUMATRA (PERSIS SEPERTI FOTO)
+            // ==========================================================
+
+            // Konfigurasi Umum agar style sama persis
+            var commonChartOptions = {
+                chart: {
+                    type: 'bar',
+                    height: 400,
+                    toolbar: { show: false },
+                    background: 'transparent'
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: true,
+                        barHeight: '50%', // Ketebalan batang
+                        colors: {
+                            ranges: [
+                                { from: -10, to: 0, color: '#008080' }, // Hijau Tosca untuk nilai negatif (kiri)
+                                { from: 0.001, to: 10, color: '#B22222' } // Merah Gelap untuk nilai positif (kanan)
+                            ]
+                        }
+                    }
+                },
+                dataLabels: { enabled: false }, // Dimatikan karena di foto tidak ada angka di dalam batang
+                grid: {
+                    show: false, // Menghilangkan garis background
+                },
+                yaxis: {
+                    labels: {
+                        style: { colors: '#222', fontSize: '12px', fontFamily: 'Arial' }
+                    },
+                    axisBorder: { show: true, color: '#333' },
+                    axisTicks: { show: true, color: '#333' }
+                },
+                xaxis: {
+                    title: {
+                        text: 'Standardized Beta Coefficient',
+                        style: { color: '#222', fontSize: '13px', fontFamily: 'Arial', fontWeight: 500 }
+                    },
+                    labels: { style: { colors: '#222', fontFamily: 'Arial' } },
+                    axisBorder: { show: true, color: '#333' },
+                    axisTicks: { show: true, color: '#333' }
+                },
+                annotations: {
+                    xaxis: [{
+                        x: 0,
+                        strokeDashArray: 0,
+                        borderColor: '#222', // Garis tengah nol warna hitam pekat
+                        borderWidth: 1.5
+                    }]
+                },
+                tooltip: { theme: 'light' }
+            };
+
+            // 1. DATA PULAU JAWA
+            var optionsJawa = Object.assign({}, commonChartOptions, {
+                series: [{
+                    name: 'Beta Coefficient',
+                    // Angka disesuaikan dengan posisi batang di gambar (Jawa)
+                    data: [-2.85, -0.61, -0.55, 0.55, -0.31, 0.27, -0.09, 0.09]
+                }],
+                xaxis: Object.assign({}, commonChartOptions.xaxis, {
+                    categories: [
+                        'Lama Sekolah (Thn)',
+                        'Pengangguran (%)',
+                        'PDRB (Rp)',
+                        'Pengeluaran per Kapita (Ribu Rp)',
+                        'Sanitasi Layak (%)',
+                        'Umur Harapan Hidup (Thn)',
+                        'Air Minum Layak (%)',
+                        'Partisipasi Angkatan Kerja (%)'
+                    ]
+                })
+            });
+
+            // 2. DATA PULAU SUMATRA
+            var optionsSumatra = Object.assign({}, commonChartOptions, {
+                series: [{
+                    name: 'Beta Coefficient',
+                    // Angka disesuaikan dengan posisi batang di gambar (Sumatra)
+                    data: [-2.45, -1.22, 0.51, 0.35, 0.26, -0.19, 0.14, -0.02]
+                }],
+                xaxis: Object.assign({}, commonChartOptions.xaxis, {
+                    categories: [
+                        'Pengeluaran per Kapita (Ribu Rp)',
+                        'Umur Harapan Hidup (Thn)',
+                        'Pengangguran (%)',
+                        'Air Minum Layak (%)',
+                        'Lama Sekolah (Thn)',
+                        'Sanitasi Layak (%)',
+                        'Partisipasi Angkatan Kerja (%)',
+                        'PDRB (Rp)'
+                    ]
+                })
+            });
+
+            // Render Grafik Jawa
+            var chartJawa = new ApexCharts(document.querySelector("#chart-jawa"), optionsJawa);
+            chartJawa.render();
+
+            // Render Grafik Sumatra
+            var chartSumatra = new ApexCharts(document.querySelector("#chart-sumatra"), optionsSumatra);
+            chartSumatra.render();
+
+            // Sinkronkan boxplot & bar korelasi dengan tema yang tersimpan
+            if (initialTheme === 'light') {
+                updateChartsForTheme('light');
             }
         });
     </script>
